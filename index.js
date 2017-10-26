@@ -34,8 +34,14 @@ function DashAccessory(log, config, api) {
 	var dashButton = dash(this.mac, null, null, this.protocol);
 	dashButton.on('detected', function() {
 		this.log('Dash button detected');
-		this.on = !this.on;
+		this.on = true;
 		this.switchService.setCharacteristic(Characteristic.On, this.on);
+		var localThis = this;
+		setTimeout(function() {
+				   localThis.log('Auto-off');
+				   localThis.on = false;
+				   localThis.switchService.setCharacteristic(Characteristic.On, localThis.on);
+				   }, 1000);
 	}.bind(this));
 
 }
