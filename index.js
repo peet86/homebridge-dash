@@ -18,6 +18,7 @@ function DashAccessory(log, config, api) {
 	this.mac = config.mac;
 	this.name = config.name || 'Amazon Dash';
 	this.protocol = config.protocol || 'all';
+	this.autoOff = config.autoOff;
 	this.isOn = false;
 
 	this.infoService = new Service.AccessoryInformation();
@@ -34,14 +35,19 @@ function DashAccessory(log, config, api) {
 	var dashButton = dash(this.mac, null, null, this.protocol);
 	dashButton.on('detected', function() {
 		this.log('Dash button detected');
-		this.on = true;
-		this.switchService.setCharacteristic(Characteristic.On, this.on);
-		var localThis = this;
-		setTimeout(function() {
-				   localThis.log('Auto-off');
-				   localThis.on = false;
-				   localThis.switchService.setCharacteristic(Characteristic.On, localThis.on);
-				   }, 1000);
+		if (this.autoOff) {
+			this.on = true;
+			this.switchService.setCharacteristic(Characteristic.On, this.on);
+			var localThis = this;
+			setTimeout(function() {
+				localThis.log('Auto-off');
+				localThis.on = false;
+				localThis.switchService.setCharacteristic(Characteristic.On, localThis.on);
+			}, 1000);
+		} else {
+			this.on = !this.on;
+			this.switchService.setCharacteristic(Characteristic.On, this.on);
+		}
 	}.bind(this));
 
 }
