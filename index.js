@@ -33,6 +33,7 @@ function DashAccessory(log, config, api) {
 
 	var dashButton = dash(this.mac, null, null, this.protocol);
 	dashButton.on('detected', function() {
+		this.log('Dash button detected');
 		this.on = !this.on;
 		this.switchService.setCharacteristic(Characteristic.On, this.on);
 	}.bind(this));
@@ -53,6 +54,7 @@ DashAccessory.prototype.getState = function(callback) {
 };
 
 DashAccessory.prototype.setState = function(value, callback) {
+	this.log((value ? 'on' : 'off'));
 	this.isOn = value;
 	callback();
 };
